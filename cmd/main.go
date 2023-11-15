@@ -35,14 +35,14 @@ func main() {
 	})
 
 	// log a debug entry.
-	logger.LogDebug(logharbour.Debug1, "Debugging user session", logharbour.DebugInfo{
+	logger.LogDebug("Debugging user session", logharbour.DebugInfo{
 		Variables: map[string]interface{}{"sessionID": "12345"},
 	})
 	// Change logger priority at runtime.
 	logger.ChangePriority(logharbour.Debug2)
 
 	// log another debug entry with a higher verbosity level.
-	logger.LogDebug(logharbour.Debug2, "Detailed debugging info", logharbour.DebugInfo{
+	logger.LogDebug("Detailed debugging info", logharbour.DebugInfo{
 		Variables: map[string]interface{}{"sessionID": "12345", "userID": "john"},
 	})
 
@@ -52,7 +52,7 @@ func main() {
 
 func innerFunction(logger *logharbour.Logger) {
 	// log a debug entry.
-	logger.LogDebug(logharbour.Debug1, "Debugging inner function", logharbour.DebugInfo{
+	logger.LogDebug("Debugging inner function", logharbour.DebugInfo{
 		Variables: map[string]interface{}{"innerVar": "innerValue"},
 	})
 }
