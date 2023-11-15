@@ -14,12 +14,6 @@ func (vf ValidatorFunc) Validate(entry any) error {
 }
 
 func main() {
-	// Define the common logger context.
-	context := logharbour.LoggerContext{
-		AppName:    "MyAwesomeApp",
-		SystemName: "MyAwesomeSystem",
-	}
-
 	// Define a simple validator that always returns nil for no error.
 	validator := ValidatorFunc(func(entry any) error {
 		return nil
@@ -29,16 +23,16 @@ func main() {
 	fallbackWriter := logharbour.NewFallbackWriter(os.Stdout, os.Stdout)
 
 	// Initialize the logger with the context, validator, default priority, and fallback writer.
-	logger := logharbour.NewLogger(context, validator, logharbour.Info, fallbackWriter)
+	logger := logharbour.NewLogger("MyApp", validator, logharbour.Info, fallbackWriter)
 
-	// Log an activity entry.
+	// log an activity entry.
 	logger.LogActivity(logharbour.Info, "User logged in", logharbour.ActivityInfo{
 		ActivityType: "UserLogin",
 		Endpoint:     "/api/v1/login",
 		Duration:     120 * time.Millisecond,
 	})
 
-	// Log a data change entry.
+	// log a data change entry.
 	logger.LogDataChange(logharbour.Info, "User updated profile", logharbour.ChangeInfo{
 		Entity:    "User",
 		Operation: "Update",
@@ -46,7 +40,7 @@ func main() {
 		Changes:   map[string]interface{}{"email": "john@example.com"},
 	})
 
-	// Log a debug entry.
+	// log a debug entry.
 	logger.LogDebug(logharbour.Debug1, "Debugging user session", logharbour.DebugInfo{
 		Level:    "DEBUG1",
 		Message:  "Session ID is valid",
@@ -56,7 +50,7 @@ func main() {
 	// Change logger priority at runtime.
 	logger.ChangePriority(logharbour.Debug2)
 
-	// Log another debug entry with a higher verbosity level.
+	// log another debug entry with a higher verbosity level.
 	logger.LogDebug(logharbour.Debug2, "Detailed debugging info", logharbour.DebugInfo{
 		Level:    "DEBUG2",
 		Message:  "Trace: start session renewal process",

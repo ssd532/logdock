@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-// LogPriority defines the severity level of a log message.
-type LogPriority int
+// logPriority defines the severity level of a log message.
+type logPriority int
 
 const (
 	// Debug2 represents extremely verbose debugging information.
-	Debug2 LogPriority = iota + 1
+	Debug2 logPriority = iota + 1
 	// Debug1 represents detailed debugging information.
 	Debug1
 	// Debug0 represents high-level debugging information.
@@ -28,8 +28,8 @@ const (
 	Sec
 )
 
-// String returns the string representation of the LogPriority.
-func (lp LogPriority) String() string {
+// String returns the string representation of the logPriority.
+func (lp logPriority) string() string {
 	switch lp {
 	case Debug2:
 		return "Debug2"
@@ -52,9 +52,9 @@ func (lp LogPriority) String() string {
 	}
 }
 
-// MarshalJSON customizes the JSON representation of the LogPriority.
-func (lp LogPriority) MarshalJSON() ([]byte, error) {
-	return json.Marshal(lp.String())
+// MarshalJSON customizes the JSON representation of the logPriority.
+func (lp logPriority) MarshalJSON() ([]byte, error) {
+	return json.Marshal(lp.string())
 }
 
 // LogType defines the category of a log message.
@@ -70,7 +70,7 @@ const (
 )
 
 // String returns the string representation of the LogType.
-func (lt LogType) String() string {
+func (lt LogType) string() string {
 	switch lt {
 	case LogTypeChange:
 		return "Change"
@@ -85,17 +85,17 @@ func (lt LogType) String() string {
 
 // MarshalJSON customizes the JSON representation of the LogType.
 func (lt LogType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(lt.String())
+	return json.Marshal(lt.string())
 }
 
 // LogEntry encapsulates all the relevant information for a log message.
 type LogEntry struct {
-	Context   LoggerContext // The fixed set of fields that should be included in every log entry.
-	Type      LogType       // The category of the log entry.
-	Priority  LogPriority   // The severity level of the log entry.
-	Timestamp time.Time     // The time at which the log entry was created.
-	Message   string        // A descriptive message for the log entry.
-	Data      any           // The payload of the log entry, can be any type.
+	AppName   string      // The name of the application.
+	Type      LogType     // The category of the log entry.
+	Priority  logPriority // The severity level of the log entry.
+	Timestamp time.Time   // The time at which the log entry was created.
+	Message   string      // A descriptive message for the log entry.
+	Data      any         // The payload of the log entry, can be any type.
 }
 
 // Validator defines the interface for log entry validation.
@@ -105,15 +105,15 @@ type Validator interface {
 
 // Logger defines the interface for logging operations.
 type Logger interface {
-	Log(entry LogEntry) error
+	log(entry LogEntry) error
 }
 
-// HarbourLogger is the main logger with configurable priority and validation.
-type HarbourLogger struct {
-	context   LoggerContext
+// harbourLogger is the main logger with configurable priority and validation.
+type harbourLogger struct {
+	appName   string
 	writer    io.Writer
 	validator Validator
-	priority  LogPriority
+	priority  logPriority
 }
 
 // LoggerContext holds the fixed set of fields that should be included in every log entry.
@@ -122,10 +122,10 @@ type LoggerContext struct {
 	SystemName string
 }
 
-// NewHarbourLogger initializes a new HarbourLogger with the provided configuration.
-func NewLogger(context LoggerContext, validator Validator, priority LogPriority, writer io.Writer) *HarbourLogger {
-	return &HarbourLogger{
-		context:   context,
+// NewHarbourLogger initializes a new harbourLogger with the provided configuration.
+func NewLogger(appName string, validator Validator, priority logPriority, writer io.Writer) *harbourLogger {
+	return &harbourLogger{
+		appName:   appName,
 		writer:    writer,
 		validator: validator,
 		priority:  priority,
@@ -133,8 +133,9 @@ func NewLogger(context LoggerContext, validator Validator, priority LogPriority,
 }
 
 // Log processes and logs the given LogEntry if it meets the priority requirements.
-func (l *HarbourLogger) Log(entry LogEntry) error {
-	if !l.ShouldLog(entry.Priority) {
+func (l *harbourLogger) log(entry LogEntry) error {
+	entry.AppName = l.appName // Set the appName for each log entry.
+	if !l.shouldLog(entry.Priority) {
 		return nil // Do not log if the entry's priority is below the logger's threshold.
 	}
 	if err := l.validator.Validate(entry); err != nil {
@@ -147,8 +148,8 @@ func (l *HarbourLogger) Log(entry LogEntry) error {
 	return formatAndWriteEntry(l.writer, entry)
 }
 
-// ShouldLog determines if a log entry should be logged based on its priority.
-func (l *HarbourLogger) ShouldLog(p LogPriority) bool {
+// shouldLog determines if a log entry should be logged based on its priority.
+func (l *harbourLogger) shouldLog(p logPriority) bool {
 	return p >= l.priority
 }
 
@@ -186,9 +187,9 @@ type DebugInfo struct {
 }
 
 // LogDataChange logs an entry related to data changes with the specified priority and message.
-func (l *HarbourLogger) LogDataChange(priority LogPriority, message string, data ChangeInfo) error {
-	return l.Log(LogEntry{
-		Context:   l.context,
+func (l *harbourLogger) LogDataChange(priority logPriority, message string, data ChangeInfo) error {
+	return l.log(LogEntry{
+		AppName:   l.appName,
 		Type:      LogTypeChange,
 		Priority:  priority,
 		Timestamp: time.Now(),
@@ -198,9 +199,9 @@ func (l *HarbourLogger) LogDataChange(priority LogPriority, message string, data
 }
 
 // LogActivity logs an entry related to activities with the specified priority and message.
-func (l *HarbourLogger) LogActivity(priority LogPriority, message string, data ActivityInfo) error {
-	return l.Log(LogEntry{
-		Context:   l.context,
+func (l *harbourLogger) LogActivity(priority logPriority, message string, data ActivityInfo) error {
+	return l.log(LogEntry{
+		AppName:   l.appName,
 		Type:      LogTypeActivity,
 		Priority:  priority,
 		Timestamp: time.Now(),
@@ -210,9 +211,9 @@ func (l *HarbourLogger) LogActivity(priority LogPriority, message string, data A
 }
 
 // LogDebug logs an entry related to debugging with the specified priority and message.
-func (l *HarbourLogger) LogDebug(priority LogPriority, message string, data DebugInfo) error {
-	return l.Log(LogEntry{
-		Context:   l.context,
+func (l *harbourLogger) LogDebug(priority logPriority, message string, data DebugInfo) error {
+	return l.log(LogEntry{
+		AppName:   l.appName,
 		Type:      LogTypeDebug,
 		Priority:  priority,
 		Timestamp: time.Now(),
@@ -246,6 +247,6 @@ func (fw *FallbackWriter) Write(p []byte) (n int, err error) {
 	return n, err // Return the result of the write operation.
 }
 
-func (l *HarbourLogger) ChangePriority(newPriority LogPriority) {
+func (l *harbourLogger) ChangePriority(newPriority logPriority) {
 	l.priority = newPriority
 }
