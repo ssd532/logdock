@@ -87,9 +87,10 @@ type LogEntry struct {
 	AppName  string      // The name of the application.
 	Type     LogType     // The category of the log entry.
 	Priority logPriority // The severity level of the log entry.
-	When     time.Time   // The time at which the log entry was created.
-	Message  string      // A descriptive message for the log entry.
-	Data     any         // The payload of the log entry, can be any type.
+	Who      string
+	When     time.Time // The time at which the log entry was created.
+	Message  string    // A descriptive message for the log entry.
+	Data     any       // The payload of the log entry, can be any type.
 }
 
 // ChangeInfo holds information about data changes such as creations, updates, or deletions.

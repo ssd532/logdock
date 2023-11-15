@@ -8,20 +8,35 @@ import (
 	"time"
 )
 
+const defaultPriority = Info
+
 type Logger struct {
 	appName   string
 	writer    io.Writer
 	validator Validator
 	priority  logPriority
+	who       string
 }
 
-func NewLogger(appName string, validator Validator, priority logPriority, writer io.Writer) *Logger {
+func NewLogger(appName string, validator Validator, writer io.Writer) *Logger {
 	return &Logger{
 		appName:   appName,
 		writer:    writer,
 		validator: validator,
-		priority:  priority,
+		priority:  defaultPriority,
 	}
+}
+
+func (l *Logger) WithWho(who string) *Logger {
+	newLogger := *l     // Create a copy of the logger
+	newLogger.who = who // Change the 'who' field
+	return &newLogger   // Return the new logger
+}
+
+func (l *Logger) WithPriority(priority logPriority) *Logger {
+	newLogger := *l
+	newLogger.priority = priority
+	return &newLogger
 }
 
 func (l *Logger) log(entry LogEntry) error {
@@ -49,26 +64,27 @@ func formatAndWriteEntry(writer io.Writer, entry LogEntry) error {
 	return writeErr
 }
 
-func (l *Logger) LogDataChange(priority logPriority, message string, data ChangeInfo) error {
-	return l.log(LogEntry{
+func (l *Logger) newLogEntry(priority logPriority, message string, data interface{}) LogEntry {
+	return LogEntry{
 		AppName:  l.appName,
-		Type:     LogTypeChange,
 		Priority: priority,
 		When:     time.Now().UTC(),
 		Message:  message,
 		Data:     data,
-	})
+		Who:      l.who,
+	}
+}
+
+func (l *Logger) LogDataChange(priority logPriority, message string, data ChangeInfo) error {
+	entry := l.newLogEntry(priority, message, data)
+	entry.Type = LogTypeChange
+	return l.log(entry)
 }
 
 func (l *Logger) LogActivity(priority logPriority, message string, data ActivityInfo) error {
-	return l.log(LogEntry{
-		AppName:  l.appName,
-		Type:     LogTypeActivity,
-		Priority: priority,
-		When:     time.Now().UTC(),
-		Message:  message,
-		Data:     data,
-	})
+	entry := l.newLogEntry(priority, message, data)
+	entry.Type = LogTypeActivity
+	return l.log(entry)
 }
 
 func (l *Logger) LogDebug(priority logPriority, message string, data DebugInfo) error {
@@ -90,14 +106,9 @@ func (l *Logger) LogDebug(priority logPriority, message string, data DebugInfo) 
 		data.StackTrace = string(buf[:length])
 	}
 
-	return l.log(LogEntry{
-		AppName:  l.appName,
-		Type:     LogTypeDebug,
-		Priority: priority,
-		When:     time.Now().UTC(),
-		Message:  message,
-		Data:     data,
-	})
+	entry := l.newLogEntry(priority, message, data)
+	entry.Type = LogTypeDebug
+	return l.log(entry)
 }
 
 func (l *Logger) ChangePriority(newPriority logPriority) {

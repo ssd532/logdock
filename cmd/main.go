@@ -22,7 +22,7 @@ func main() {
 	fallbackWriter := logharbour.NewFallbackWriter(os.Stdout, os.Stdout)
 
 	// Initialize the logger with the context, validator, default priority, and fallback writer.
-	logger := logharbour.NewLogger("MyApp", validator, logharbour.Info, fallbackWriter)
+	logger := logharbour.NewLogger("MyApp", validator, fallbackWriter)
 
 	// log an activity entry.
 	logger.LogActivity(logharbour.Info, "User logged in", map[string]interface{}{"username": "john"})
