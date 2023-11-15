@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"time"
 
 	"github.com/ssd532/logdock/logharbour"
 )
@@ -26,34 +25,38 @@ func main() {
 	logger := logharbour.NewLogger("MyApp", validator, logharbour.Info, fallbackWriter)
 
 	// log an activity entry.
-	logger.LogActivity(logharbour.Info, "User logged in", logharbour.ActivityInfo{
-		ActivityType: "UserLogin",
-		Endpoint:     "/api/v1/login",
-		Duration:     120 * time.Millisecond,
-	})
+	logger.LogActivity(logharbour.Info, "User logged in", map[string]interface{}{"username": "john"})
 
 	// log a data change entry.
 	logger.LogDataChange(logharbour.Info, "User updated profile", logharbour.ChangeInfo{
 		Entity:    "User",
 		Operation: "Update",
-		User:      "johndoe",
 		Changes:   map[string]interface{}{"email": "john@example.com"},
 	})
 
 	// log a debug entry.
 	logger.LogDebug(logharbour.Debug1, "Debugging user session", logharbour.DebugInfo{
-		Level:    "DEBUG1",
-		Message:  "Session ID is valid",
-		Location: "session_manager.go:45",
+		Variables: map[string]interface{}{"sessionID": "12345"},
 	})
-
 	// Change logger priority at runtime.
 	logger.ChangePriority(logharbour.Debug2)
 
 	// log another debug entry with a higher verbosity level.
 	logger.LogDebug(logharbour.Debug2, "Detailed debugging info", logharbour.DebugInfo{
-		Level:    "DEBUG2",
-		Message:  "Trace: start session renewal process",
-		Location: "session_manager.go:50",
+		Variables: map[string]interface{}{"sessionID": "12345", "userID": "john"},
 	})
+
+	outerFunction(logger)
+
+}
+
+func innerFunction(logger *logharbour.Logger) {
+	// log a debug entry.
+	logger.LogDebug(logharbour.Debug1, "Debugging inner function", logharbour.DebugInfo{
+		Variables: map[string]interface{}{"innerVar": "innerValue"},
+	})
+}
+
+func outerFunction(logger *logharbour.Logger) {
+	innerFunction(logger)
 }
