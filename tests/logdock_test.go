@@ -35,16 +35,16 @@ func TestPriorityLevelPrinting(t *testing.T) {
 	// Initialize the logger with a basic context and validator, and a test priority level.
 	logger := logharbour.NewLogger("TestApp", ValidatorFunc(func(entry any) error {
 		return nil
-	}), logharbour.Debug1, fallbackWriter)
+	}), fallbackWriter)
 
 	// log a message at Debug1 level.
-	logger.LogDebug(logharbour.Debug1, "Debug1 message", logharbour.DebugInfo{})
+	logger.LogDebug("Debug1 message", logharbour.DebugInfo{})
 
 	// Change logger priority to a more verbose level (Debug2).
 	logger.ChangePriority(logharbour.Debug2)
 
 	// log another message at Debug2 level.
-	logger.LogDebug(logharbour.Debug2, "Debug2 message", logharbour.DebugInfo{})
+	logger.LogDebug("Debug2 message", logharbour.DebugInfo{})
 
 	// Check if both messages are present in the output.
 	outputStr := output.String()

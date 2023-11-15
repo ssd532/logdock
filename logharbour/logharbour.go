@@ -87,7 +87,7 @@ func (l *Logger) LogActivity(priority logPriority, message string, data Activity
 	return l.log(entry)
 }
 
-func (l *Logger) LogDebug(priority logPriority, message string, data DebugInfo) error {
+func (l *Logger) LogDebug(message string, data DebugInfo) error {
 	// Get the caller info (skip 2 levels to skip the LogDebug and log functions)
 	pc, file, line, ok := runtime.Caller(2)
 	if ok {
@@ -106,7 +106,7 @@ func (l *Logger) LogDebug(priority logPriority, message string, data DebugInfo) 
 		data.StackTrace = string(buf[:length])
 	}
 
-	entry := l.newLogEntry(priority, message, data)
+	entry := l.newLogEntry(l.priority, message, data)
 	entry.Type = LogTypeDebug
 	return l.log(entry)
 }
