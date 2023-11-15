@@ -25,10 +25,10 @@ func main() {
 	logger := logharbour.NewLogger("MyApp", validator, fallbackWriter)
 
 	// log an activity entry.
-	logger.LogActivity(logharbour.Info, "User logged in", map[string]interface{}{"username": "john"})
+	logger.LogActivity("User logged in", map[string]interface{}{"username": "john"})
 
 	// log a data change entry.
-	logger.LogDataChange(logharbour.Info, "User updated profile", logharbour.ChangeInfo{
+	logger.LogDataChange("User updated profile", logharbour.ChangeInfo{
 		Entity:    "User",
 		Operation: "Update",
 		Changes:   map[string]interface{}{"email": "john@example.com"},

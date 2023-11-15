@@ -64,10 +64,10 @@ func formatAndWriteEntry(writer io.Writer, entry LogEntry) error {
 	return writeErr
 }
 
-func (l *Logger) newLogEntry(priority logPriority, message string, data interface{}) LogEntry {
+func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 	return LogEntry{
 		AppName:  l.appName,
-		Priority: priority,
+		Priority: l.priority,
 		When:     time.Now().UTC(),
 		Message:  message,
 		Data:     data,
@@ -75,14 +75,14 @@ func (l *Logger) newLogEntry(priority logPriority, message string, data interfac
 	}
 }
 
-func (l *Logger) LogDataChange(priority logPriority, message string, data ChangeInfo) error {
-	entry := l.newLogEntry(priority, message, data)
+func (l *Logger) LogDataChange(message string, data ChangeInfo) error {
+	entry := l.newLogEntry(message, data)
 	entry.Type = LogTypeChange
 	return l.log(entry)
 }
 
-func (l *Logger) LogActivity(priority logPriority, message string, data ActivityInfo) error {
-	entry := l.newLogEntry(priority, message, data)
+func (l *Logger) LogActivity(message string, data ActivityInfo) error {
+	entry := l.newLogEntry(message, data)
 	entry.Type = LogTypeActivity
 	return l.log(entry)
 }
@@ -106,7 +106,7 @@ func (l *Logger) LogDebug(message string, data DebugInfo) error {
 		data.StackTrace = string(buf[:length])
 	}
 
-	entry := l.newLogEntry(l.priority, message, data)
+	entry := l.newLogEntry(message, data)
 	entry.Type = LogTypeDebug
 	return l.log(entry)
 }
