@@ -85,15 +85,15 @@ func (lt LogType) string() string {
 
 // LogEntry encapsulates all the relevant information for a log message.
 type LogEntry struct {
-	AppName  string      // The name of the application.
+	AppName  string // The name of the application.
+	System   string
 	Type     LogType     // The category of the log entry.
 	Priority logPriority // The severity level of the log entry.
 	Who      string
 	When     time.Time // The time at which the log entry was created.
 	RemoteIP string    // IP address of remote endpoint from where the operation is being performed.
-
-	Message string // A descriptive message for the log entry.
-	Data    any    // The payload of the log entry, can be any type.
+	Message  string    // A descriptive message for the log entry.
+	Data     any       // The payload of the log entry, can be any type.
 }
 
 // ChangeInfo holds information about data changes such as creations, updates, or deletions.

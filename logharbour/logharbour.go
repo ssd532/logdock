@@ -3,8 +3,6 @@ package logharbour
 import (
 	"encoding/json"
 	"io"
-	"runtime"
-	"strings"
 	"sync"
 	"time"
 )
@@ -13,11 +11,12 @@ const defaultPriority = Info
 
 type Logger struct {
 	appName   string
-	writer    io.Writer
-	validator Validator
+	system    string // Add the system field
 	priority  logPriority
 	who       string
 	remoteIP  string
+	writer    io.Writer
+	validator Validator
 	mu        sync.Mutex
 }
 
@@ -35,6 +34,7 @@ func (l *Logger) clone() *Logger {
 func NewLogger(appName string, validator Validator, writer io.Writer) *Logger {
 	return &Logger{
 		appName:   appName,
+		system:    GetSystemName(),
 		writer:    writer,
 		validator: validator,
 		priority:  defaultPriority,
@@ -87,6 +87,7 @@ func formatAndWriteEntry(writer io.Writer, entry LogEntry) error {
 func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 	return LogEntry{
 		AppName:  l.appName,
+		System:   l.system,
 		Priority: l.priority,
 		When:     time.Now().UTC(),
 		Message:  message,
@@ -109,23 +110,7 @@ func (l *Logger) LogActivity(message string, data ActivityInfo) error {
 }
 
 func (l *Logger) LogDebug(message string, data DebugInfo) error {
-	// Get the caller info (skip 2 levels to skip the LogDebug and log functions)
-	pc, file, line, ok := runtime.Caller(2)
-	if ok {
-		data.FileName = file
-		data.LineNumber = line
-
-		// Get the function name
-		funcName := runtime.FuncForPC(pc).Name()
-		// Trim the package name
-		funcName = funcName[strings.LastIndex(funcName, ".")+1:]
-		data.FunctionName = funcName
-
-		// Get the stack trace
-		buf := make([]byte, 1024)
-		length := runtime.Stack(buf, false)
-		data.StackTrace = string(buf[:length])
-	}
+	data.FileName, data.LineNumber, data.FunctionName, data.StackTrace = GetDebugInfo(2)
 
 	entry := l.newLogEntry(message, data)
 	entry.Type = LogTypeDebug
