@@ -10,31 +10,33 @@ import (
 const defaultPriority = Info
 
 type Logger struct {
-	appName   string
-	system    string // Add the system field
-	priority  logPriority
-	who       string
-	remoteIP  string
-	module    string // Add the module field
-	op        string // Add the operation field
-	whatClass string // Add the whatClass field
-	writer    io.Writer
-	validator Validator
-	mu        sync.Mutex
+	appName        string
+	system         string // Add the system field
+	priority       logPriority
+	who            string
+	remoteIP       string
+	module         string // Add the module field
+	op             string // Add the operation field
+	whatClass      string // Add the whatClass field
+	whatInstanceId string // Add the whatInstanceId field
+	writer         io.Writer
+	validator      Validator
+	mu             sync.Mutex
 }
 
 func (l *Logger) clone() *Logger {
 	return &Logger{
-		appName:   l.appName,
-		system:    l.system,
-		writer:    l.writer,
-		validator: l.validator,
-		priority:  l.priority,
-		who:       l.who,
-		remoteIP:  l.remoteIP,
-		module:    l.module,
-		op:        l.op,
-		whatClass: l.whatClass,
+		appName:        l.appName,
+		system:         l.system,
+		writer:         l.writer,
+		validator:      l.validator,
+		priority:       l.priority,
+		who:            l.who,
+		remoteIP:       l.remoteIP,
+		module:         l.module,
+		op:             l.op,
+		whatClass:      l.whatClass,
+		whatInstanceId: l.whatInstanceId,
 	}
 }
 
@@ -69,6 +71,12 @@ func (l *Logger) WithOp(op string) *Logger {
 func (l *Logger) WithWhatClass(whatClass string) *Logger {
 	newLogger := l.clone()
 	newLogger.whatClass = whatClass
+	return newLogger
+}
+
+func (l *Logger) WithWhatInstanceId(whatInstanceId string) *Logger {
+	newLogger := l.clone()
+	newLogger.whatInstanceId = whatInstanceId
 	return newLogger
 }
 
@@ -111,17 +119,18 @@ func formatAndWriteEntry(writer io.Writer, entry LogEntry) error {
 
 func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 	return LogEntry{
-		AppName:   l.appName,
-		System:    l.system,
-		Priority:  l.priority,
-		When:      time.Now().UTC(),
-		Message:   message,
-		Data:      data,
-		Who:       l.who,
-		RemoteIP:  l.remoteIP,
-		Module:    l.module,    // Add the module field
-		Op:        l.op,        // Add the operation field
-		WhatClass: l.whatClass, // Add the whatClass field
+		AppName:        l.appName,
+		System:         l.system,
+		Priority:       l.priority,
+		When:           time.Now().UTC(),
+		Message:        message,
+		Data:           data,
+		Who:            l.who,
+		RemoteIP:       l.remoteIP,
+		Module:         l.module,         // Add the module field
+		Op:             l.op,             // Add the operation field
+		WhatClass:      l.whatClass,      // Add the whatClass field
+		WhatInstanceId: l.whatInstanceId, // Add the whatInstanceId field
 	}
 }
 
