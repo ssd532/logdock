@@ -25,25 +25,25 @@ func main() {
 	logger := logharbour.NewLogger("MyApp", validator, fallbackWriter)
 
 	// log an activity entry.
-	logger.LogActivity("User logged in", map[string]interface{}{"username": "john"})
+	logger.LogActivity("User logged in", map[string]any{"username": "john"})
 
 	// log a data change entry.
 	logger.LogDataChange("User updated profile", logharbour.ChangeInfo{
 		Entity:    "User",
 		Operation: "Update",
-		Changes:   map[string]interface{}{"email": "john@example.com"},
+		Changes:   map[string]any{"email": "john@example.com"},
 	})
 
 	// log a debug entry.
 	logger.LogDebug("Debugging user session", logharbour.DebugInfo{
-		Variables: map[string]interface{}{"sessionID": "12345"},
+		Variables: map[string]any{"sessionID": "12345"},
 	})
 	// Change logger priority at runtime.
 	logger.ChangePriority(logharbour.Debug2)
 
 	// log another debug entry with a higher verbosity level.
 	logger.LogDebug("Detailed debugging info", logharbour.DebugInfo{
-		Variables: map[string]interface{}{"sessionID": "12345", "userID": "john"},
+		Variables: map[string]any{"sessionID": "12345", "userID": "john"},
 	})
 
 	outerFunction(logger)
@@ -53,7 +53,7 @@ func main() {
 func innerFunction(logger *logharbour.Logger) {
 	// log a debug entry.
 	logger.LogDebug("Debugging inner function", logharbour.DebugInfo{
-		Variables: map[string]interface{}{"innerVar": "innerValue"},
+		Variables: map[string]any{"innerVar": "innerValue"},
 	})
 }
 

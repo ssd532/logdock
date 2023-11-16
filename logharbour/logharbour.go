@@ -127,7 +127,7 @@ func formatAndWriteEntry(writer io.Writer, entry LogEntry) error {
 	return writeErr
 }
 
-func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
+func (l *Logger) newLogEntry(message string, data any) LogEntry {
 	return LogEntry{
 		AppName:        l.appName,
 		System:         l.system,

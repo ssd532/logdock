@@ -110,9 +110,9 @@ type LogEntry struct {
 
 // ChangeInfo holds information about data changes such as creations, updates, or deletions.
 type ChangeInfo struct {
-	Entity    string                 `json:"entity"`
-	Operation string                 `json:"operation"`
-	Changes   map[string]interface{} `json:"changes"`
+	Entity    string         `json:"entity"`
+	Operation string         `json:"operation"`
+	Changes   map[string]any `json:"changes"`
 }
 
 // ActivityInfo holds information about system activities like web service calls or function executions.
@@ -120,13 +120,13 @@ type ActivityInfo any
 
 // DebugInfo holds debugging information that can help in software diagnostics.
 type DebugInfo struct {
-	Pid          int                    `json:"pid"`
-	Runtime      string                 `json:"runtime"`
-	FileName     string                 `json:"fileName"`
-	LineNumber   int                    `json:"lineNumber"`
-	FunctionName string                 `json:"functionName"`
-	StackTrace   string                 `json:"stackTrace"`
-	Variables    map[string]interface{} `json:"variables"`
+	Pid          int            `json:"pid"`
+	Runtime      string         `json:"runtime"`
+	FileName     string         `json:"fileName"`
+	LineNumber   int            `json:"lineNumber"`
+	FunctionName string         `json:"functionName"`
+	StackTrace   string         `json:"stackTrace"`
+	Variables    map[string]any `json:"variables"`
 }
 
 // FallbackWriter provides an io.Writer that automatically falls back to a secondary writer if the primary writer fails.
