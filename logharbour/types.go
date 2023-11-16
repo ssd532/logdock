@@ -91,6 +91,7 @@ type LogEntry struct {
 	Priority logPriority // The severity level of the log entry.
 	Who      string
 	When     time.Time // The time at which the log entry was created.
+	Op       string    // The operation being performed
 	RemoteIP string    // IP address of remote endpoint from where the operation is being performed.
 	Message  string    // A descriptive message for the log entry.
 	Data     any       // The payload of the log entry, can be any type.

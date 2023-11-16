@@ -16,6 +16,7 @@ type Logger struct {
 	who       string
 	remoteIP  string
 	module    string // Add the module field
+	op        string // Add the operation field
 	writer    io.Writer
 	validator Validator
 	mu        sync.Mutex
@@ -31,6 +32,7 @@ func (l *Logger) clone() *Logger {
 		who:       l.who,
 		remoteIP:  l.remoteIP,
 		module:    l.module,
+		op:        l.op,
 	}
 }
 
@@ -53,6 +55,12 @@ func (l *Logger) WithWho(who string) *Logger {
 func (l *Logger) WithModule(module string) *Logger {
 	newLogger := l.clone()
 	newLogger.module = module
+	return newLogger
+}
+
+func (l *Logger) WithOp(op string) *Logger {
+	newLogger := l.clone()
+	newLogger.op = op
 	return newLogger
 }
 
@@ -104,6 +112,7 @@ func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 		Who:      l.who,
 		RemoteIP: l.remoteIP,
 		Module:   l.module, // Add the module field
+		Op:       l.op,     // Add the operation field
 	}
 }
 
