@@ -94,6 +94,7 @@ type LogEntry struct {
 	RemoteIP string    // IP address of remote endpoint from where the operation is being performed.
 	Message  string    // A descriptive message for the log entry.
 	Data     any       // The payload of the log entry, can be any type.
+	Module   string    // The module or subsystem within the application
 }
 
 // ChangeInfo holds information about data changes such as creations, updates, or deletions.

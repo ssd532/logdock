@@ -15,6 +15,7 @@ type Logger struct {
 	priority  logPriority
 	who       string
 	remoteIP  string
+	module    string // Add the module field
 	writer    io.Writer
 	validator Validator
 	mu        sync.Mutex
@@ -23,11 +24,13 @@ type Logger struct {
 func (l *Logger) clone() *Logger {
 	return &Logger{
 		appName:   l.appName,
+		system:    l.system,
 		writer:    l.writer,
 		validator: l.validator,
 		priority:  l.priority,
 		who:       l.who,
 		remoteIP:  l.remoteIP,
+		module:    l.module,
 	}
 }
 
@@ -45,6 +48,12 @@ func (l *Logger) WithWho(who string) *Logger {
 	newLogger := l.clone() // Create a copy of the logger
 	newLogger.who = who    // Change the 'who' field
 	return newLogger       // Return the new logger
+}
+
+func (l *Logger) WithModule(module string) *Logger {
+	newLogger := l.clone()
+	newLogger.module = module
+	return newLogger
 }
 
 func (l *Logger) WithPriority(priority logPriority) *Logger {
@@ -94,6 +103,7 @@ func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 		Data:     data,
 		Who:      l.who,
 		RemoteIP: l.remoteIP,
+		Module:   l.module, // Add the module field
 	}
 }
 
