@@ -17,7 +17,19 @@ type Logger struct {
 	validator Validator
 	priority  logPriority
 	who       string
+	remoteIP  string
 	mu        sync.Mutex
+}
+
+func (l *Logger) clone() *Logger {
+	return &Logger{
+		appName:   l.appName,
+		writer:    l.writer,
+		validator: l.validator,
+		priority:  l.priority,
+		who:       l.who,
+		remoteIP:  l.remoteIP,
+	}
 }
 
 func NewLogger(appName string, validator Validator, writer io.Writer) *Logger {
@@ -30,15 +42,21 @@ func NewLogger(appName string, validator Validator, writer io.Writer) *Logger {
 }
 
 func (l *Logger) WithWho(who string) *Logger {
-	newLogger := *l     // Create a copy of the logger
-	newLogger.who = who // Change the 'who' field
-	return &newLogger   // Return the new logger
+	newLogger := l.clone() // Create a copy of the logger
+	newLogger.who = who    // Change the 'who' field
+	return newLogger       // Return the new logger
 }
 
 func (l *Logger) WithPriority(priority logPriority) *Logger {
-	newLogger := *l
+	newLogger := l.clone()
 	newLogger.priority = priority
-	return &newLogger
+	return newLogger
+}
+
+func (l *Logger) WithRemoteIP(remoteIP string) *Logger {
+	newLogger := l.clone()
+	newLogger.remoteIP = remoteIP
+	return newLogger
 }
 
 func (l *Logger) log(entry LogEntry) error {
@@ -74,6 +92,7 @@ func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 		Message:  message,
 		Data:     data,
 		Who:      l.who,
+		RemoteIP: l.remoteIP,
 	}
 }
 
