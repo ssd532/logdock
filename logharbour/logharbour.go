@@ -19,6 +19,7 @@ type Logger struct {
 	op             string // Add the operation field
 	whatClass      string // Add the whatClass field
 	whatInstanceId string // Add the whatInstanceId field
+	status         Status
 	writer         io.Writer
 	validator      Validator
 	mu             sync.Mutex
@@ -37,6 +38,7 @@ func (l *Logger) clone() *Logger {
 		op:             l.op,
 		whatClass:      l.whatClass,
 		whatInstanceId: l.whatInstanceId,
+		status:         l.status,
 	}
 }
 
@@ -77,6 +79,12 @@ func (l *Logger) WithWhatClass(whatClass string) *Logger {
 func (l *Logger) WithWhatInstanceId(whatInstanceId string) *Logger {
 	newLogger := l.clone()
 	newLogger.whatInstanceId = whatInstanceId
+	return newLogger
+}
+
+func (l *Logger) WithStatus(status Status) *Logger {
+	newLogger := l.clone()
+	newLogger.status = status
 	return newLogger
 }
 
@@ -131,6 +139,7 @@ func (l *Logger) newLogEntry(message string, data interface{}) LogEntry {
 		Op:             l.op,             // Add the operation field
 		WhatClass:      l.whatClass,      // Add the whatClass field
 		WhatInstanceId: l.whatInstanceId, // Add the whatInstanceId field
+		Status:         l.status,
 	}
 }
 

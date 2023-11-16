@@ -83,6 +83,13 @@ func (lt LogType) string() string {
 	}
 }
 
+type Status int
+
+const (
+	Success Status = iota
+	Failure
+)
+
 // LogEntry encapsulates all the relevant information for a log message.
 type LogEntry struct {
 	AppName        string // The name of the application.
@@ -94,6 +101,7 @@ type LogEntry struct {
 	Op             string    // The operation being performed
 	WhatClass      string    // The unique ID, name of the object instance on which the operation was being attempted
 	WhatInstanceId string    // The unique ID, name, or other "primary key" information of the object instance on which the operation was being attempted
+	Status         Status    // 0 or 1, indicating success (1) or failure (0), or some other binary representation
 	RemoteIP       string    // IP address of remote endpoint from where the operation is being performed.
 	Message        string    // A descriptive message for the log entry.
 	Data           any       // The payload of the log entry, can be any type.
