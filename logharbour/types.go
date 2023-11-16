@@ -2,6 +2,7 @@ package logharbour
 
 import (
 	"io"
+	"sync"
 	"time"
 )
 
@@ -116,6 +117,7 @@ type DebugInfo struct {
 type FallbackWriter struct {
 	primary  io.Writer // The main writer to which log entries will be written.
 	fallback io.Writer // The fallback writer used if the primary writer fails.
+	mu       sync.Mutex
 }
 
 // NewFallbackWriter creates a new FallbackWriter with a specified primary and fallback writer.
@@ -129,6 +131,8 @@ func NewFallbackWriter(primary, fallback io.Writer) *FallbackWriter {
 // Write attempts to write the byte slice to the primary writer, falling back to the secondary writer on error.
 // It returns the number of bytes written and any error encountered that caused the write to stop early.
 func (fw *FallbackWriter) Write(p []byte) (n int, err error) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
 	n, err = fw.primary.Write(p)
 	if err != nil {
 		// Primary writer failed; attempt to write to the fallback writer.

@@ -5,6 +5,7 @@ import (
 	"io"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -16,6 +17,7 @@ type Logger struct {
 	validator Validator
 	priority  logPriority
 	who       string
+	mu        sync.Mutex
 }
 
 func NewLogger(appName string, validator Validator, writer io.Writer) *Logger {
@@ -112,6 +114,8 @@ func (l *Logger) LogDebug(message string, data DebugInfo) error {
 }
 
 func (l *Logger) ChangePriority(newPriority logPriority) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	l.priority = newPriority
 }
 
