@@ -120,6 +120,8 @@ type ActivityInfo any
 
 // DebugInfo holds debugging information that can help in software diagnostics.
 type DebugInfo struct {
+	Pid          int                    `json:"pid"`
+	Runtime      string                 `json:"runtime"`
 	FileName     string                 `json:"fileName"`
 	LineNumber   int                    `json:"lineNumber"`
 	FunctionName string                 `json:"functionName"`

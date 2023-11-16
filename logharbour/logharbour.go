@@ -3,6 +3,8 @@ package logharbour
 import (
 	"encoding/json"
 	"io"
+	"os"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -157,6 +159,8 @@ func (l *Logger) LogActivity(message string, data ActivityInfo) error {
 
 func (l *Logger) LogDebug(message string, data DebugInfo) error {
 	data.FileName, data.LineNumber, data.FunctionName, data.StackTrace = GetDebugInfo(2)
+	data.Pid = os.Getpid()
+	data.Runtime = runtime.Version()
 
 	entry := l.newLogEntry(message, data)
 	entry.Type = LogTypeDebug
