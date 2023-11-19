@@ -6,11 +6,6 @@ import (
 	"time"
 )
 
-// Validator defines the interface for log entry validation.
-type Validator interface {
-	Validate(any) error
-}
-
 // logPriority defines the severity level of a log message.
 type logPriority int
 

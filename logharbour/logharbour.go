@@ -7,6 +7,8 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const defaultPriority = Info
@@ -23,7 +25,7 @@ type Logger struct {
 	whatInstanceId string // Add the whatInstanceId field
 	status         Status
 	writer         io.Writer
-	validator      Validator
+	validator      *validator.Validate
 	mu             sync.Mutex
 }
 
@@ -32,7 +34,6 @@ func (l *Logger) clone() *Logger {
 		appName:        l.appName,
 		system:         l.system,
 		writer:         l.writer,
-		validator:      l.validator,
 		priority:       l.priority,
 		who:            l.who,
 		remoteIP:       l.remoteIP,
@@ -41,15 +42,16 @@ func (l *Logger) clone() *Logger {
 		whatClass:      l.whatClass,
 		whatInstanceId: l.whatInstanceId,
 		status:         l.status,
+		validator:      l.validator,
 	}
 }
 
-func NewLogger(appName string, validator Validator, writer io.Writer) *Logger {
+func NewLogger(appName string, writer io.Writer) *Logger {
 	return &Logger{
 		appName:   appName,
 		system:    GetSystemName(),
 		writer:    writer,
-		validator: validator,
+		validator: validator.New(),
 		priority:  defaultPriority,
 	}
 }
@@ -107,7 +109,7 @@ func (l *Logger) log(entry LogEntry) error {
 	if !l.shouldLog(entry.Priority) {
 		return nil
 	}
-	if err := l.validator.Validate(entry); err != nil {
+	if err := l.validator.Struct(entry); err != nil {
 		return err
 	}
 	return formatAndWriteEntry(l.writer, entry)
