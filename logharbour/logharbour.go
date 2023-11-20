@@ -20,7 +20,7 @@ const defaultPriority = Info
 type Logger struct {
 	appName        string              // Name of the application.
 	system         string              // System where the application is running.
-	priority       logPriority         // Priority level of the log messages.
+	priority       LogPriority         // Priority level of the log messages.
 	who            string              // User or service performing the operation.
 	remoteIP       string              // IP address of the remote endpoint.
 	module         string              // Module or subsystem within the application.
@@ -105,7 +105,7 @@ func (l *Logger) WithStatus(status Status) *Logger {
 }
 
 // WithPriority returns a new Logger with the 'priority' field set to the specified value.
-func (l *Logger) WithPriority(priority logPriority) *Logger {
+func (l *Logger) WithPriority(priority LogPriority) *Logger {
 	newLogger := l.clone()
 	newLogger.priority = priority
 	return newLogger
@@ -134,7 +134,7 @@ func (l *Logger) log(entry LogEntry) error {
 }
 
 // shouldLog determines whether a log entry should be written based on its priority.
-func (l *Logger) shouldLog(p logPriority) bool {
+func (l *Logger) shouldLog(p LogPriority) bool {
 	return p >= l.priority
 }
 
@@ -194,7 +194,7 @@ func (l *Logger) LogDebug(message string, data DebugInfo) error {
 }
 
 // ChangePriority changes the priority level of the Logger.
-func (l *Logger) ChangePriority(newPriority logPriority) {
+func (l *Logger) ChangePriority(newPriority LogPriority) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.priority = newPriority
