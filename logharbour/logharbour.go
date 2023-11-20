@@ -18,6 +18,9 @@ const DefaultPriority = Info
 // Logger is safe for concurrent use. However, it's not recommended
 // to share a Logger instance across multiple goroutines.
 //
+// If the writer is a FallbackWriter and validation of a log entry fails,
+// the Logger will automatically write the invalid entry to the FallbackWriter's fallback writer.
+//
 // The 'With' prefixed methods in the Logger are used to create a new Logger instance
 // with a specific field set to a new value. These methods  create a copy of the current Logger,
 // then set the desired field to the new value, and finally return the new Logger.
@@ -58,11 +61,24 @@ func (l *Logger) clone() *Logger {
 }
 
 // NewLogger creates a new Logger with the specified application name and writer.
+// We recommend using NewLoggerWithFallback instead of this method.
 func NewLogger(appName string, writer io.Writer) *Logger {
 	return &Logger{
 		appName:   appName,
 		system:    GetSystemName(),
 		writer:    writer,
+		validator: validator.New(),
+		priority:  DefaultPriority,
+	}
+}
+
+// NewLoggerWithFallback creates a new Logger with a fallback writer.
+// The fallback writer is used if the primary writer fails or if validation of a log entry fails.
+func NewLoggerWithFallback(appName string, fallbackWriter *FallbackWriter) *Logger {
+	return &Logger{
+		appName:   appName,
+		system:    GetSystemName(),
+		writer:    fallbackWriter,
 		validator: validator.New(),
 		priority:  DefaultPriority,
 	}
@@ -134,6 +150,11 @@ func (l *Logger) log(entry LogEntry) error {
 		return nil
 	}
 	if err := l.validator.Struct(entry); err != nil {
+		// Check if the writer is a FallbackWriter
+		if fw, ok := l.writer.(*FallbackWriter); ok {
+			// Write to the fallback writer if validation fails
+			return formatAndWriteEntry(fw.fallback, entry)
+		}
 		return err
 	}
 	return formatAndWriteEntry(l.writer, entry)

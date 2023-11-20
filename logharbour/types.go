@@ -157,6 +157,7 @@ type DebugInfo struct {
 }
 
 // FallbackWriter provides an io.Writer that automatically falls back to a secondary writer if the primary writer fails.
+// It is also used if logentry is not valid so that we can still log erroneous entries without writing them to the primary writer.
 type FallbackWriter struct {
 	primary  io.Writer // The main writer to which log entries will be written.
 	fallback io.Writer // The fallback writer used if the primary writer fails.
