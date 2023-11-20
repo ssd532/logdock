@@ -1,6 +1,7 @@
 package logharbour
 
 import (
+	"encoding/json"
 	"io"
 	"sync"
 	"time"
@@ -52,6 +53,12 @@ func (lp logPriority) string() string {
 	}
 }
 
+// MarshalJSON is required by the encoding/json package.
+// It converts the logPriority to its string representation and returns it as a JSON-encoded value.
+func (lp logPriority) MarshalJSON() ([]byte, error) {
+	return json.Marshal(lp.string())
+}
+
 // LogType defines the category of a log message.
 type LogType int
 
@@ -76,6 +83,12 @@ func (lt LogType) string() string {
 	default:
 		return "Unknown"
 	}
+}
+
+// MarshalJSON is required by the encoding/json package.
+// It converts the LogType to its string representation and returns it as a JSON-encoded value.
+func (lt LogType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(lt.string())
 }
 
 type Status int
