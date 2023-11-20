@@ -1,3 +1,6 @@
+// Package logharbour is a comprehensive logging system.
+// It supports different log levels, log types, and can encode log entries in JSON.
+// It also provides a fallback mechanism in case the primary log writer fails.
 package logharbour
 
 import (
