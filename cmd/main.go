@@ -6,23 +6,12 @@ import (
 	"github.com/ssd532/logdock/logharbour"
 )
 
-type ValidatorFunc func(entry any) error
-
-func (vf ValidatorFunc) Validate(entry any) error {
-	return vf(entry.(logharbour.LogEntry))
-}
-
 func main() {
-	// Define a simple validator that always returns nil for no error.
-	validator := ValidatorFunc(func(entry any) error {
-		return nil
-	})
-
 	// Create a fallback writer that uses stdout as the fallback.
 	fallbackWriter := logharbour.NewFallbackWriter(os.Stdout, os.Stdout)
 
 	// Initialize the logger with the context, validator, default priority, and fallback writer.
-	logger := logharbour.NewLogger("MyApp", validator, fallbackWriter)
+	logger := logharbour.NewLogger("MyApp", fallbackWriter)
 
 	// log an activity entry.
 	logger.LogActivity("User logged in", map[string]any{"username": "john"})
