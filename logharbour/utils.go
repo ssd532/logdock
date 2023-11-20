@@ -7,7 +7,7 @@ import (
 )
 
 // GetSystemName returns the host name of the system.
-func GetSystemName() string {
+func getSystemName() string {
 	host, err := os.Hostname()
 	if err != nil {
 		return "unknown"

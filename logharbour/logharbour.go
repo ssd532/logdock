@@ -65,7 +65,7 @@ func (l *Logger) clone() *Logger {
 func NewLogger(appName string, writer io.Writer) *Logger {
 	return &Logger{
 		appName:   appName,
-		system:    GetSystemName(),
+		system:    getSystemName(),
 		writer:    writer,
 		validator: validator.New(),
 		priority:  DefaultPriority,
@@ -77,7 +77,7 @@ func NewLogger(appName string, writer io.Writer) *Logger {
 func NewLoggerWithFallback(appName string, fallbackWriter *FallbackWriter) *Logger {
 	return &Logger{
 		appName:   appName,
-		system:    GetSystemName(),
+		system:    getSystemName(),
 		writer:    fallbackWriter,
 		validator: validator.New(),
 		priority:  DefaultPriority,
