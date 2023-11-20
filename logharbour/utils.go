@@ -16,6 +16,7 @@ func getSystemName() string {
 }
 
 // GetDebugInfo returns debug information including file name, line number, function name and stack trace.
+// The 'skip' parameter determines how many stack frames to ascend, with 0 identifying the caller of GetDebugInfo.
 func GetDebugInfo(skip int) (fileName string, lineNumber int, functionName string, stackTrace string) {
 	pc, file, line, ok := runtime.Caller(skip)
 	if ok {
