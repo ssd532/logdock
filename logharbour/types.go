@@ -59,20 +59,20 @@ func (lp logPriority) MarshalJSON() ([]byte, error) {
 	return json.Marshal(lp.string())
 }
 
-// LogType defines the category of a log message.
-type LogType int
+// logType defines the category of a log message.
+type logType int
 
 const (
 	// LogTypeChange represents a log entry for data changes.
-	LogTypeChange LogType = iota + 1
+	LogTypeChange logType = iota + 1
 	// LogTypeActivity represents a log entry for activities such as web service calls.
 	LogTypeActivity
 	// LogTypeDebug represents a log entry for debug information.
 	LogTypeDebug
 )
 
-// String returns the string representation of the LogType.
-func (lt LogType) string() string {
+// String returns the string representation of the logType.
+func (lt logType) string() string {
 	switch lt {
 	case LogTypeChange:
 		return "Change"
@@ -86,8 +86,8 @@ func (lt LogType) string() string {
 }
 
 // MarshalJSON is required by the encoding/json package.
-// It converts the LogType to its string representation and returns it as a JSON-encoded value.
-func (lt LogType) MarshalJSON() ([]byte, error) {
+// It converts the logType to its string representation and returns it as a JSON-encoded value.
+func (lt logType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(lt.string())
 }
 
@@ -102,7 +102,7 @@ const (
 type LogEntry struct {
 	AppName        string // The name of the application.
 	System         string
-	Type           LogType     // The category of the log entry.
+	Type           logType     // The category of the log entry.
 	Priority       logPriority // The severity level of the log entry.
 	Who            string
 	When           time.Time // The time at which the log entry was created.
