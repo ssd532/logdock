@@ -11,57 +11,49 @@ import (
 type LogPriority int
 
 const (
-	// Debug2 represents extremely verbose debugging information.
-	Debug2 LogPriority = iota + 1
-	// Debug1 represents detailed debugging information.
-	Debug1
-	// Debug0 represents high-level debugging information.
-	Debug0
-	// Info represents informational messages.
-	Info
-	// Warn represents warning messages.
-	Warn
-	// Err represents error messages where operations failed to complete.
-	Err
-	// Crit represents critical failure messages.
-	Crit
-	// Sec represents security alert messages.
-	Sec
+	Debug2 LogPriority = iota + 1 // Debug2 represents extremely verbose debugging information.
+	Debug1                        // Debug1 represents detailed debugging information.
+	Debug0                        // Debug0 represents high-level debugging information.
+	Info                          // Info represents informational messages.
+	Warn                          // Warn represents warning messages.
+	Err                           // Err represents error messages where operations failed to complete.
+	Crit                          // Crit represents critical failure messages.
+	Sec                           // Sec represents security alert messages.
 )
 
 const (
-	Debug2Str  = "Debug2"
-	Debug1Str  = "Debug1"
-	Debug0Str  = "Debug0"
-	InfoStr    = "Info"
-	WarnStr    = "Warn"
-	ErrStr     = "Err"
-	CritStr    = "Crit"
-	SecStr     = "Sec"
-	UnknownStr = "Unknown"
+	LogPriorityDebug2  = "Debug2"
+	LogPriorityDebug1  = "Debug1"
+	LogPriorityDebug0  = "Debug0"
+	LogPriorityInfo    = "Info"
+	LogPriorityWarn    = "Warn"
+	LogPriorityErr     = "Err"
+	LogPriorityCrit    = "Crit"
+	LogPrioritySec     = "Sec"
+	LogPriorityUnknown = "Unknown"
 )
 
 // String returns the string representation of the logPriority.
 func (lp LogPriority) string() string {
 	switch lp {
 	case Debug2:
-		return Debug2Str
+		return LogPriorityDebug2
 	case Debug1:
-		return Debug1Str
+		return LogPriorityDebug1
 	case Debug0:
-		return Debug0Str
+		return LogPriorityDebug0
 	case Info:
-		return InfoStr
+		return LogPriorityInfo
 	case Warn:
-		return WarnStr
+		return LogPriorityWarn
 	case Err:
-		return ErrStr
+		return LogPriorityErr
 	case Crit:
-		return CritStr
+		return LogPriorityCrit
 	case Sec:
-		return SecStr
+		return LogPrioritySec
 	default:
-		return UnknownStr
+		return LogPriorityUnknown
 	}
 }
 
@@ -75,32 +67,32 @@ func (lp LogPriority) MarshalJSON() ([]byte, error) {
 type LogType int
 
 const (
-	// LogTypeChange represents a log entry for data changes.
-	LogTypeChange LogType = iota + 1
-	// LogTypeActivity represents a log entry for activities such as web service calls.
-	LogTypeActivity
-	// LogTypeDebug represents a log entry for debug information.
-	LogTypeDebug
+	// Change represents a log entry for data changes.
+	Change LogType = iota + 1
+	// Activity represents a log entry for activities such as web service calls.
+	Activity
+	// Debug represents a log entry for debug information.
+	Debug
 )
 
 const (
-	LogTypeChangeStr   = "Change"
-	LogTypeActivityStr = "Activity"
-	LogTypeDebugStr    = "Debug"
-	LogTypeUnknownStr  = "Unknown"
+	LogTypeChange   = "Change"
+	LogTypeActivity = "Activity"
+	LogTypeDebug    = "Debug"
+	LogTypeUnknown  = "Unknown"
 )
 
 // String returns the string representation of the LogType.
 func (lt LogType) string() string {
 	switch lt {
-	case LogTypeChange:
-		return LogTypeChangeStr
-	case LogTypeActivity:
-		return LogTypeActivityStr
-	case LogTypeDebug:
-		return LogTypeDebugStr
+	case Change:
+		return LogTypeChange
+	case Activity:
+		return LogTypeActivity
+	case Debug:
+		return LogTypeDebug
 	default:
-		return LogTypeUnknownStr
+		return LogTypeUnknown
 	}
 }
 

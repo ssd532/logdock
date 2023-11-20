@@ -198,14 +198,14 @@ func (l *Logger) newLogEntry(message string, data any) LogEntry {
 // LogDataChange logs a data change event.
 func (l *Logger) LogDataChange(message string, data ChangeInfo) error {
 	entry := l.newLogEntry(message, data)
-	entry.Type = LogTypeChange
+	entry.Type = Change
 	return l.log(entry)
 }
 
 // LogActivity logs an activity event.
 func (l *Logger) LogActivity(message string, data ActivityInfo) error {
 	entry := l.newLogEntry(message, data)
-	entry.Type = LogTypeActivity
+	entry.Type = Activity
 	return l.log(entry)
 }
 
@@ -216,7 +216,7 @@ func (l *Logger) LogDebug(message string, data DebugInfo) error {
 	data.Runtime = runtime.Version()
 
 	entry := l.newLogEntry(message, data)
-	entry.Type = LogTypeDebug
+	entry.Type = Debug
 	return l.log(entry)
 }
 
