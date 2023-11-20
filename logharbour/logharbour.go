@@ -11,7 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-const defaultPriority = Info
+const DefaultPriority = Info
 
 // Logger provides a structured interface for logging.
 // It's designed for each goroutine to have its own instance.
