@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// LogPriority defines the severity level of a log message.
+// logPriority defines the severity level of a log message.
 type LogPriority int
 
 const (
@@ -29,32 +29,44 @@ const (
 	Sec
 )
 
-// String returns the string representation of the LogPriority.
+const (
+	Debug2Str  = "Debug2"
+	Debug1Str  = "Debug1"
+	Debug0Str  = "Debug0"
+	InfoStr    = "Info"
+	WarnStr    = "Warn"
+	ErrStr     = "Err"
+	CritStr    = "Crit"
+	SecStr     = "Sec"
+	UnknownStr = "Unknown"
+)
+
+// String returns the string representation of the logPriority.
 func (lp LogPriority) string() string {
 	switch lp {
 	case Debug2:
-		return "Debug2"
+		return Debug2Str
 	case Debug1:
-		return "Debug1"
+		return Debug1Str
 	case Debug0:
-		return "Debug0"
+		return Debug0Str
 	case Info:
-		return "Info"
+		return InfoStr
 	case Warn:
-		return "Warn"
+		return WarnStr
 	case Err:
-		return "Err"
+		return ErrStr
 	case Crit:
-		return "Crit"
+		return CritStr
 	case Sec:
-		return "Sec"
+		return SecStr
 	default:
-		return "Unknown"
+		return UnknownStr
 	}
 }
 
 // MarshalJSON is required by the encoding/json package.
-// It converts the LogPriority to its string representation and returns it as a JSON-encoded value.
+// It converts the logPriority to its string representation and returns it as a JSON-encoded value.
 func (lp LogPriority) MarshalJSON() ([]byte, error) {
 	return json.Marshal(lp.string())
 }
@@ -71,17 +83,24 @@ const (
 	LogTypeDebug
 )
 
+const (
+	LogTypeChangeStr   = "Change"
+	LogTypeActivityStr = "Activity"
+	LogTypeDebugStr    = "Debug"
+	LogTypeUnknownStr  = "Unknown"
+)
+
 // String returns the string representation of the LogType.
 func (lt LogType) string() string {
 	switch lt {
 	case LogTypeChange:
-		return "Change"
+		return LogTypeChangeStr
 	case LogTypeActivity:
-		return "Activity"
+		return LogTypeActivityStr
 	case LogTypeDebug:
-		return "Debug"
+		return LogTypeDebugStr
 	default:
-		return "Unknown"
+		return LogTypeUnknownStr
 	}
 }
 
