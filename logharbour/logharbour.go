@@ -17,17 +17,23 @@ const DefaultPriority = Info
 // It's designed for each goroutine to have its own instance.
 // Logger is safe for concurrent use. However, it's not recommended
 // to share a Logger instance across multiple goroutines.
+//
+// The 'With' prefixed methods in the Logger are used to create a new Logger instance
+// with a specific field set to a new value. These methods  create a copy of the current Logger,
+// then set the desired field to the new value, and finally return the new Logger.
+// This approach provides a flexible way to create a new Logger with specific settings,
+// without having to provide all settings at once or change the settings of an existing Logger.
 type Logger struct {
 	appName        string              // Name of the application.
 	system         string              // System where the application is running.
+	module         string              // Module or subsystem within the application.
 	priority       LogPriority         // Priority level of the log messages.
 	who            string              // User or service performing the operation.
-	remoteIP       string              // IP address of the remote endpoint.
-	module         string              // Module or subsystem within the application.
 	op             string              // Operation being performed.
 	whatClass      string              // Class of the object instance involved.
 	whatInstanceId string              // Unique ID of the object instance.
 	status         Status              // Status of the operation.
+	remoteIP       string              // IP address of the remote endpoint.
 	writer         io.Writer           // Writer interface for log entries.
 	validator      *validator.Validate // Validator for log entries.
 	mu             sync.Mutex          // Mutex for thread-safe operations.
@@ -38,15 +44,15 @@ func (l *Logger) clone() *Logger {
 	return &Logger{
 		appName:        l.appName,
 		system:         l.system,
-		writer:         l.writer,
+		module:         l.module,
 		priority:       l.priority,
 		who:            l.who,
-		remoteIP:       l.remoteIP,
-		module:         l.module,
 		op:             l.op,
 		whatClass:      l.whatClass,
 		whatInstanceId: l.whatInstanceId,
 		status:         l.status,
+		remoteIP:       l.remoteIP,
+		writer:         l.writer,
 		validator:      l.validator,
 	}
 }
@@ -58,7 +64,7 @@ func NewLogger(appName string, writer io.Writer) *Logger {
 		system:    GetSystemName(),
 		writer:    writer,
 		validator: validator.New(),
-		priority:  defaultPriority,
+		priority:  DefaultPriority,
 	}
 }
 
@@ -154,17 +160,17 @@ func (l *Logger) newLogEntry(message string, data any) LogEntry {
 	return LogEntry{
 		AppName:        l.appName,
 		System:         l.system,
+		Module:         l.module,
 		Priority:       l.priority,
+		Who:            l.who,
+		Op:             l.op,
 		When:           time.Now().UTC(),
+		WhatClass:      l.whatClass,
+		WhatInstanceId: l.whatInstanceId,
+		Status:         l.status,
+		RemoteIP:       l.remoteIP,
 		Message:        message,
 		Data:           data,
-		Who:            l.who,
-		RemoteIP:       l.remoteIP,
-		Module:         l.module,         // Add the module field
-		Op:             l.op,             // Add the operation field
-		WhatClass:      l.whatClass,      // Add the whatClass field
-		WhatInstanceId: l.whatInstanceId, // Add the whatInstanceId field
-		Status:         l.status,
 	}
 }
 
